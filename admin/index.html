@@ -1,46 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin - Add Instagram Post</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Gallery</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 90%;
+      margin-bottom: 20px;
+    }
+
+    .image-box {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      border-radius: 0px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .image-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+      z-index: 1;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      position: relative;
+      z-index: 2;
+    }
+
+    .image-box:hover img {
+      transition: 1s;
+      transform: scale(1.1);
+    }
+
+    .image-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      width: 100%;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 3;
+    }
+
+    .image-box:hover .image-title {
+      opacity: 1;
+    }
+
+    .load-more {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .load-more:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-  <h2>Add Instagram Post URL</h2>
-  <form id="postForm">
-    <input type="text" id="instaUrl" placeholder="Enter Instagram post URL" required />
-    <button type="submit">Add Post</button>
-  </form>
 
-  <!-- Firebase SDK -->
+  <h2>Latest Products</h2>
+  <div class="grid-container" id="productGrid"></div>
+  <button class="load-more" id="loadMore">Load More</button>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
   <script>
-    // Firebase Config
-    var firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyBXJ_RnfjUDi7qPDATWVnS5lSFw6jVRYgo",
-  authDomain: "shopping-e284c.firebaseapp.com",
-  databaseURL: "https://shopping-e284c-default-rtdb.firebaseio.com",
-  projectId: "shopping-e284c",
-  storageBucket: "shopping-e284c.appspot.com",
-  messagingSenderId: "248274428739",
-  appId: "1:248274428739:web:fc30dd9eb1ef83f610c5f6",
-  measurementId: "G-ZXZCK9BW7T"
+      authDomain: "shopping-e284c.firebaseapp.com",
+      databaseURL: "https://shopping-e284c-default-rtdb.firebaseio.com",
+      projectId: "shopping-e284c",
+      storageBucket: "shopping-e284c.appspot.com",
+      messagingSenderId: "248274428739",
+      appId: "1:248274428739:web:fc30dd9eb1ef83f610c5f6",
+      measurementId: "G-ZXZCK9BW7T"
     };
     firebase.initializeApp(firebaseConfig);
-    var database = firebase.database();
 
-    document.getElementById("postForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      var url = document.getElementById("instaUrl").value;
-      var newPostRef = database.ref("posts").push(); // Generate unique key
-      newPostRef.set({ url: url })
-        .then(() => {
-          alert("Post added!");
-          document.getElementById("instaUrl").value = "";
-        })
-        .catch((error) => {
-          console.error("Error adding post:", error);
+    const database = firebase.database();
+    const productGrid = document.getElementById("productGrid");
+    let allProducts = [];
+    let currentIndex = 0;
+    const pageSize = 3;
+
+    function renderProducts(products) {
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "image-box";
+
+        const link = document.createElement("a");
+        link.href = product.url;
+        link.title = product.title;
+        link.className = "popup-link";
+
+        const placeholder = document.createElement("div");
+        placeholder.className = "image-placeholder";
+
+        const img = document.createElement("img");
+        img.src = product.url;
+        img.alt = product.title;
+
+        img.onload = () => {
+          placeholder.remove();
+          img.style.opacity = 1;
+        };
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "image-title";
+        titleDiv.innerText = product.title;
+
+        link.appendChild(placeholder);
+        link.appendChild(img);
+        link.appendChild(titleDiv);
+        div.appendChild(link);
+        productGrid.appendChild(div);
+      });
+
+      $('.popup-link').magnificPopup({
+        type: 'image',
+        gallery: { enabled: true }
+      });
+    }
+
+    function loadNextBatch() {
+      const next = allProducts.slice(currentIndex, currentIndex + pageSize);
+      renderProducts(next);
+      currentIndex += pageSize;
+      if (currentIndex >= allProducts.length) {
+        document.getElementById("loadMore").style.display = "none";
+      }
+    }
+
+    function loadProducts() {
+      database.ref("products").once("value").then(snapshot => {
+        allProducts = [];
+        snapshot.forEach(child => {
+          allProducts.push(child.val());
         });
-    });
+        loadNextBatch();
+      });
+    }
+
+    document.getElementById("loadMore").addEventListener("click", loadNextBatch);
+
+    loadProducts();
   </script>
+
 </body>
 </html>

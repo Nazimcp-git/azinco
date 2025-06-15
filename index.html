@@ -47,6 +47,7 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Gloock&family=Mulish:wght@200;300;400;500;600;700&display=swap"
             rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"/>
 
         <!-- Structured Data: Local Business -->
         <script type="application/ld+json">
@@ -131,6 +132,125 @@
         visibility: hidden;
     }
 </style>
+<style>
+    .prd{
+        background: #fff;
+      margin: 80px 0px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 90%;
+      margin-bottom: 20px;
+    }
+    @media screen and (max-width:992px){
+        .grid-container {
+      display: block;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 90%;
+      margin-bottom: 20px;
+    }
+    }
+
+    .image-box {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      border-radius: 0px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    @media screen and (max-width:992px){
+        .grid-container {
+      display: block;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 90%;
+      margin-bottom: 20px;
+    }
+    .image-box {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      border-radius: 0px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    }
+
+    .image-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+      z-index: 1;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      position: relative;
+      z-index: 2;
+    }
+
+    .image-box:hover img {
+      transition: 1s;
+      transform: scale(1.1);
+    }
+
+    .image-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      width: 100%;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 3;
+    }
+
+    .image-box:hover .image-title {
+      opacity: 1;
+    }
+
+    .load-more {
+      padding: 10px 30px;
+      background-color: #3ea6eb;
+      color: white;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .load-more:hover {
+      background-color: #0056b3;
+    }
+  </style>
 <script>
     window.addEventListener("load", () => {
         const splash = document.getElementById("splash-screen");
@@ -336,77 +456,17 @@
 
 
         <!-- PRODUCTS -->
-        <section class="cz-sf-product" id="products">
-            <div class="container">
-                <div class="sectitle" data-aos="fade-up" data-aos-duration="1200">
+         <div class="prd">
+            <div class="sectitle aos-init aos-animate" data-aos="fade-up" data-aos-duration="1200">
                     <h2>Products</h2>
                 </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <a href="images/p1.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
+            
 
-                                <div class="sf-pr-img">
-                                    <img src="images/p1.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
+  <div class="grid-container" id="productGrid"></div>
+  <button class="load-more" id="loadMore">Load More</button>
+         </div>
+        
 
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="images/p2.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
-                                <div class="sf-pr-img">
-                                    <img src="images/p2.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="images/p3.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
-                                <div class="sf-pr-img">
-                                    <img src="images/p3.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="images/p4.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
-                                <div class="sf-pr-img">
-                                    <img src="images/p4.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="images/p5.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
-                                <div class="sf-pr-img">
-                                    <img src="images/p5.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="images/p6.jpeg" class="zoomcli">
-                            <div class="sf-pr-blk">
-                                <div class="sf-pr-img">
-                                    <img src="images/p6.jpeg" alt="Sofa Set Design" title="Sofa Set Design">
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <section class="cz-sf-cta" id="contact">
             <div class="container">
@@ -519,7 +579,93 @@
 
         });
     </script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXJ_RnfjUDi7qPDATWVnS5lSFw6jVRYgo",
+      authDomain: "shopping-e284c.firebaseapp.com",
+      databaseURL: "https://shopping-e284c-default-rtdb.firebaseio.com",
+      projectId: "shopping-e284c",
+      storageBucket: "shopping-e284c.appspot.com",
+      messagingSenderId: "248274428739",
+      appId: "1:248274428739:web:fc30dd9eb1ef83f610c5f6",
+      measurementId: "G-ZXZCK9BW7T"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const productGrid = document.getElementById("productGrid");
+    let allProducts = [];
+    let currentIndex = 0;
+    const pageSize = 6;
+
+    function renderProducts(products) {
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "image-box";
+
+        const link = document.createElement("a");
+        link.href = product.url;
+        link.title = product.title;
+        link.className = "popup-link";
+
+        const placeholder = document.createElement("div");
+        placeholder.className = "image-placeholder";
+
+        const img = document.createElement("img");
+        img.src = product.url;
+        img.alt = product.title;
+
+        img.onload = () => {
+          placeholder.remove();
+          img.style.opacity = 1;
+        };
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "image-title";
+        titleDiv.innerText = product.title;
+
+        link.appendChild(placeholder);
+        link.appendChild(img);
+        link.appendChild(titleDiv);
+        div.appendChild(link);
+        productGrid.appendChild(div);
+      });
+
+      $('.popup-link').magnificPopup({
+        type: 'image',
+        gallery: { enabled: true }
+      });
+    }
+
+    function loadNextBatch() {
+      const next = allProducts.slice(currentIndex, currentIndex + pageSize);
+      renderProducts(next);
+      currentIndex += pageSize;
+      if (currentIndex >= allProducts.length) {
+        document.getElementById("loadMore").style.display = "none";
+      }
+    }
+
+    function loadProducts() {
+      database.ref("products").once("value").then(snapshot => {
+        allProducts = [];
+        snapshot.forEach(child => {
+          allProducts.push(child.val());
+        });
+        loadNextBatch();
+      });
+    }
+
+    document.getElementById("loadMore").addEventListener("click", loadNextBatch);
+
+    loadProducts();
+  </script>
 
 
 </body>
