@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Instagram Feed</title>
+  <style>
+    #instaFeed {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .instagram-media {
+      max-width: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h2>Instagram Feed</h2>
+  <div id="instaFeed"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script>
+    // Firebase Config
+    var firebaseConfig = {
+      apiKey: "AIzaSyBXJ_RnfjUDi7qPDATWVnS5lSFw6jVRYgo",
+  authDomain: "shopping-e284c.firebaseapp.com",
+  databaseURL: "https://shopping-e284c-default-rtdb.firebaseio.com",
+  projectId: "shopping-e284c",
+  storageBucket: "shopping-e284c.appspot.com",
+  messagingSenderId: "248274428739",
+  appId: "1:248274428739:web:fc30dd9eb1ef83f610c5f6",
+  measurementId: "G-ZXZCK9BW7T"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+
+    var feedDiv = document.getElementById("instaFeed");
+
+    database.ref("posts").once("value").then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        var url = childSnapshot.val().url;
+        var blockquote = document.createElement("blockquote");
+        blockquote.className = "instagram-media";
+        blockquote.setAttribute("data-instgrm-permalink", url);
+        blockquote.setAttribute("data-instgrm-version", "14");
+        feedDiv.appendChild(blockquote);
+      });
+
+      // Load Instagram embed script
+      var script = document.createElement("script");
+      script.src = "https://www.instagram.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    });
+  </script>
+</body>
+</html>
