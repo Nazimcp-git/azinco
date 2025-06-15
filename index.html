@@ -653,14 +653,19 @@
     }
 
     function loadProducts() {
-      database.ref("products").once("value").then(snapshot => {
-        allProducts = [];
-        snapshot.forEach(child => {
-          allProducts.push(child.val());
-        });
-        loadNextBatch();
-      });
-    }
+  database.ref("products").once("value").then(snapshot => {
+    allProducts = [];
+    snapshot.forEach(child => {
+      allProducts.push(child.val());
+    });
+
+    // ✅ Sort by createdAt (latest first)
+    allProducts.sort((a, b) => b.createdAt - a.createdAt);
+
+    loadNextBatch();
+  });
+}
+
 
     document.getElementById("loadMore").addEventListener("click", loadNextBatch);
 
