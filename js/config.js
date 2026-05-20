@@ -39,7 +39,7 @@ var CONFIG = {
   // ── Admin Password ─────────────────────
   // SHA-256 hash of your admin password
   // Generate at: https://emn178.github.io/online-tools/sha256.html
-  ADMIN_PASSWORD_HASH: "3b9097fd6b2af7c51ae8c5931f3b660ca7f3d7417f77e50b1b897bab2f8455f0",
+  ADMIN_PASSWORD_HASH: "2511500b2ff5f3cf7d19ae0f5889a1d6b1f2793df7fcff8a723586a1fcef45ff",
 
   // ── Pagination ─────────────────────────
   PAGE_SIZE: 6,
