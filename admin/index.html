@@ -1,158 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Upload – Azinco</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-
-    input[type="text"], input[type="file"], input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .success {
-      color: green;
-      margin-top: 15px;
-      text-align: center;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – Azinco Interiors</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="shortcut icon" href="../images/icon.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin.css">
 </head>
-<body>
+<body class="admin-body">
 
-  <!-- Password Prompt -->
-  <div class="container" id="passwordScreen">
-    <h2>Admin Login</h2>
-    <input type="password" id="passwordInput" placeholder="Enter Admin Password">
-    <button onclick="checkPassword()">Unlock</button>
+  <!-- ════════════════════════════════════ -->
+  <!-- LOGIN SCREEN                         -->
+  <!-- ════════════════════════════════════ -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <img src="../images/sofa.png" alt="Azinco" class="logo">
+      <h2>Admin Login</h2>
+      <p class="subtitle">Sign in to manage products</p>
+      <div class="login-error" id="loginError"></div>
+      <form id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Sign In</button>
+      </form>
+    </div>
   </div>
 
-  <!-- Upload Panel (Hidden Initially) -->
-  <div class="container hidden" id="uploadScreen">
-    <h2>Upload New Product</h2>
-    <input type="file" id="productImage" accept="image/*">
-    <input type="text" id="productTitle" placeholder="Enter product title">
-    <input type="text" id="productDescription" placeholder="Enter product description">
-    <button onclick="uploadProduct()">Upload</button>
-    <div id="status" class="success"></div>
+  <!-- ════════════════════════════════════ -->
+  <!-- DASHBOARD                            -->
+  <!-- ════════════════════════════════════ -->
+  <div class="dashboard" id="dashboard">
+
+    <!-- Header -->
+    <div class="dash-header">
+      <img src="../images/sofa.png" alt="Azinco" class="logo">
+      <div class="dash-header-right">
+        <span class="admin-badge">Admin</span>
+        <button class="btn btn-secondary" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="dash-content">
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="upload">Upload Product</button>
+        <button class="tab-btn" data-tab="products">All Products</button>
+      </div>
+
+      <!-- ── Upload Tab ──────────────── -->
+      <div class="tab-panel active" id="tab-upload">
+        <div class="upload-card">
+          <h3>Upload New Product</h3>
+          <form id="uploadForm">
+            <div class="drop-zone" id="dropZone">
+              <span class="drop-icon">📁</span>
+              <span id="dropText">Drag & drop image here, or click to select</span>
+              <input type="file" id="productImage" accept="image/jpeg,image/png,image/webp" style="display:none">
+            </div>
+            <div id="imagePreview"></div>
+            <div class="progress-wrapper" id="progressWrapper">
+              <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
+              </div>
+              <div class="progress-text" id="progressText"></div>
+            </div>
+            <div class="form-group">
+              <label for="productTitle">Title *</label>
+              <input type="text" id="productTitle" placeholder="e.g. Premium L-Shape Sofa" required>
+            </div>
+            <div class="form-group">
+              <label for="productDescription">Description</label>
+              <textarea id="productDescription" placeholder="Optional product description"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="productCategory">Category</label>
+              <select id="productCategory">
+                <option value="">Select category</option>
+                <option value="sofa">Sofa</option>
+                <option value="interior">Interior</option>
+                <option value="bedroom">Bedroom</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button type="submit" class="btn btn-primary" id="uploadBtn" style="flex:2">Upload Product</button>
+              <button type="button" class="btn btn-secondary" id="clearForm" style="flex:1">Clear</button>
+              <button type="button" class="btn btn-secondary" id="retryBtn" style="display:none;flex:1">Retry</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Products Tab ────────────── -->
+      <div class="tab-panel" id="tab-products">
+        <div class="table-card">
+          <h3>All Products</h3>
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Details</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr><td colspan="5" style="text-align:center;padding:30px;color:#888;">Loading…</td></tr>
+            </tbody>
+          </table>
+          <div class="pagination">
+            <button id="prevPage">← Prev</button>
+            <span id="pageInfo">Page 1</span>
+            <button id="nextPage">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- ════════════════════════════════════ -->
+  <!-- EDIT MODAL                           -->
+  <!-- ════════════════════════════════════ -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <h3>Edit Product</h3>
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label for="editTitle">Title</label>
+          <input type="text" id="editTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="editDescription">Description</label>
+          <textarea id="editDescription"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editCategory">Category</label>
+          <select id="editCategory">
+            <option value="">None</option>
+            <option value="sofa">Sofa</option>
+            <option value="interior">Interior</option>
+            <option value="bedroom">Bedroom</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" id="closeEditModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════ -->
+  <!-- SCRIPTS — No frameworks, no SDK      -->
+  <!-- ════════════════════════════════════ -->
+  <script src="../js/config.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/image-utils.js"></script>
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-upload.js"></script>
+  <script src="../js/admin-products.js"></script>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyB-7xg8rHTrZNAMQ1Rx7w6mjYqWJwQrIn4",
-  authDomain: "ratt-7c9ab.firebaseapp.com",
-  databaseURL: "https://ratt-7c9ab-default-rtdb.firebaseio.com",
-  projectId: "ratt-7c9ab",
-  storageBucket: "ratt-7c9ab.appspot.com",
-  messagingSenderId: "582900835779",
-  appId: "1:582900835779:web:4621839b23c35faf39c976",
-  measurementId: "G-GE6L76ZWGG"
-    };
-    firebase.initializeApp(firebaseConfig);
+    document.addEventListener("DOMContentLoaded", function () {
+      AdminAuth.init();
+    });
 
-    const dbRef = firebase.database().ref("products");
-    const storageRef = firebase.storage().ref("product_images_two");
-
-    function uploadProduct() {
-      const file = document.getElementById("productImage").files[0];
-      const title = document.getElementById("productTitle").value.trim();
-      const description = document.getElementById("productDescription").value.trim();
-      const status = document.getElementById("status");
-
-      if (!file || !title) {
-        alert("Please select an image and enter the title.");
-        return;
-      }
-
-      const fileName = Date.now() + "_" + file.name;
-      const uploadTask = storageRef.child(fileName).put(file);
-
-      status.innerText = "Uploading...";
-
-      uploadTask.on("state_changed", null, console.error, () => {
-        uploadTask.snapshot.ref.getDownloadURL().then((url) => {
-          dbRef.push({
-            url,
-            title,
-            description,
-            createdAt: Date.now()
-          });
-          status.innerText = "✅ Product uploaded successfully!";
-          document.getElementById("productImage").value = '';
-          document.getElementById("productTitle").value = '';
-          document.getElementById("productDescription").value = '';
-        });
+    // Tab switching
+    document.querySelectorAll(".tab-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.remove("active"); });
+        document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+        btn.classList.add("active");
+        var panel = document.getElementById("tab-" + btn.getAttribute("data-tab"));
+        if (panel) panel.classList.add("active");
       });
-    }
-
-    function checkPassword() {
-      const inputPassword = document.getElementById("passwordInput").value;
-      const correctPassword = "siyad@admin"; // 🔐 Change this password
-
-      if (inputPassword === correctPassword) {
-        document.getElementById("passwordScreen").classList.add("hidden");
-        document.getElementById("uploadScreen").classList.remove("hidden");
-      } else {
-        alert("Incorrect password!");
-      }
-    }
+    });
   </script>
-
 </body>
 </html>

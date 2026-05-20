@@ -35,13 +35,14 @@ $(".cz-test-slide").slick({
   ],
 });
 
+// ── Magnetic Button Effect ───────────────────────
 var magnets = document.querySelectorAll(".mgb");
 var strength = 50;
 
-magnets.forEach((magnet) => {
+magnets.forEach(function (magnet) {
   magnet.addEventListener("mousemove", moveMagnet);
   magnet.addEventListener("mouseout", function (event) {
-    TweenMax.to(event.currentTarget, 1, { x: 0, y: 0, ease: Power4.easeOut });
+    gsap.to(event.currentTarget, { duration: 1, x: 0, y: 0, ease: "power4.out" });
   });
 });
 
@@ -49,35 +50,35 @@ function moveMagnet(event) {
   var magnetButton = event.currentTarget;
   var bounding = magnetButton.getBoundingClientRect();
 
-  //console.log(magnetButton, bounding)
-
-  TweenMax.to(magnetButton, 1, {
+  gsap.to(magnetButton, {
+    duration: 1,
     x:
       ((event.clientX - bounding.left) / magnetButton.offsetWidth - 0.5) *
       strength,
     y:
       ((event.clientY - bounding.top) / magnetButton.offsetHeight - 0.5) *
       strength,
-    ease: Power4.easeOut,
+    ease: "power4.out",
   });
 }
 
-// MENU
+// ── Mobile Menu Toggle ───────────────────────────
 
 $(".menu-togg").click(function () {
   $(".menu-togg").toggleClass("open");
   $(".main-menu").toggleClass("show");
 });
 
-// IMAGE REVEAL
+// ── Image Reveal (GSAP ScrollTrigger) ────────────
 
 gsap.registerPlugin(ScrollTrigger);
-let mask = document.querySelectorAll(".msk");
+var masks = document.querySelectorAll(".msk");
 
-mask.forEach((msk) => {
-  let image = msk.querySelector("img");
+masks.forEach(function (msk) {
+  var image = msk.querySelector("img");
+  if (!image) return;
 
-  let tl = gsap.timeline({
+  var tl = gsap.timeline({
     scrollTrigger: {
       trigger: msk,
       toggleActions: "restart none none reset",
@@ -86,22 +87,24 @@ mask.forEach((msk) => {
   });
 
   tl.set(msk, { autoAlpha: 1 });
-  tl.from(msk, 1.5, {
+  tl.from(msk, {
+    duration: 1.5,
     xPercent: -100,
-    ease: Power2.out,
+    ease: "power2.out",
   });
-  tl.from(image, 1.5, {
+  tl.from(image, {
+    duration: 1.5,
     xPercent: 100,
     scale: 1.3,
     delay: -1.5,
-    ease: Power2.out,
+    ease: "power2.out",
   });
 });
 
-// REVEAL
+// ── Hero Reveal Animation ────────────────────────
 
-const tl = gsap.timeline();
-tl.from(".navLogo, .menu-btn li, .res-menu-btn li", {
+var heroTl = gsap.timeline();
+heroTl.from(".navLogo, .menu-btn li, .res-menu-btn li", {
   duration: 1,
   delay: 0.5,
   opacity: 0,
@@ -110,8 +113,8 @@ tl.from(".navLogo, .menu-btn li, .res-menu-btn li", {
     amount: 0.4,
   },
 });
-tl.from(
-  ".hero-content h1",
+heroTl.from(
+  ".cz-hero-content h1",
   {
     y: -20,
     duration: 1.2,
@@ -122,16 +125,16 @@ tl.from(
   },
   "-=1"
 );
-tl.from(
-  ".hero-content p",
+heroTl.from(
+  ".cz-hero-content p",
   {
     duration: 1.2,
     opacity: 0,
   },
   "-=.5"
 );
-tl.from(
-  ".hero-content a",
+heroTl.from(
+  ".cz-hero-content a",
   {
     duration: 1.2,
     opacity: 0,
@@ -139,10 +142,9 @@ tl.from(
   "-=.5"
 );
 
-//
+// ── Sticky Header ────────────────────────────────
 
 $(function () {
-  //caches a jQuery object containing the header element
   var header = $("header");
   $(window).scroll(function () {
     var scroll = $(window).scrollTop();
@@ -154,5 +156,3 @@ $(function () {
     }
   });
 });
-
-
